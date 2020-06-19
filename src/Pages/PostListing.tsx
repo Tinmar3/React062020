@@ -1,20 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 import axios from 'axios';
 import { Link } from "react-router-dom";
 
-interface State {
-    posts: Array<any>
-}
+const PostListing = () => {
+    const [posts, setPosts] = useState<Array<any>>([]);
 
-class PostListing extends Component<any, State> {
-    constructor(props: any) {
-        super(props);
-        this.state = {
-            posts: []
-        };
-    }
-
-    componentDidMount() {
+    useEffect(() => {
         axios.get(`https://vue-tutorial-44271.firebaseio.com/posts.json`)
             .then(res => {
                 const data = res.data;
@@ -23,18 +14,16 @@ class PostListing extends Component<any, State> {
                 for (const key in res.data) {
                     postsArray.push({ ...res.data[key], id: key });
                 }
-                this.setState({ posts: postsArray })
+                setPosts(postsArray);
             })
-    }
+    }, []);
 
-    render() {
-        return (
-            <div>
-                <h1>POSTS</h1>
-                {this.state.posts.map(post => <Link to={'post/' + post.id} key={post.id}>{post.title}</Link>)}
-            </div>
-        );
-    }
+    return (
+        <div>
+            <h1>POSTS</h1>
+            {posts.map(post => <Link to={'post/' + post.id} key={post.id}>{post.title}</Link>)}
+        </div>
+    );
 }
 
 export default PostListing;
